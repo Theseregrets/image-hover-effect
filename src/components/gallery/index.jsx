@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import cn from "classname";
 import "./style.scss";
+import { CursorContext } from "../../custom-cursor/cursorManager";
 
 const images = [
   "https://images.pexels.com/photos/1075776/pexels-photo-1075776.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
@@ -10,6 +11,11 @@ const images = [
 ];
 
 function GalleryItem({ src }) {
+  const ref = useRef(null);
+  const mouseContext = useContext(CursorContext);
+  const [clipMaskRadius, setClipMaskRadius] = useState(0);
+  const [clipMask, setClipMask] = useState({ x: 0, y: 0 });
+
   const [reveal, setReveal] = useState(false);
   useEffect(() => {
     setTimeout(() => {
@@ -18,7 +24,12 @@ function GalleryItem({ src }) {
   }, []);
 
   return (
-    <div className={cn("gallery-item-wrapper", { "is-reveal": reveal })}>
+    <div
+      className={cn("gallery-item-wrapper", { "is-reveal": reveal })}
+      ref={ref}
+      onMouseEnter={() => mouseContext.setSize("hide")}
+      onMouseLeave={() => mouseContext.setSize("small")}
+    >
       <div className="gallery-item">
         <div
           className="gallery-item-image sepia"
