@@ -23,12 +23,42 @@ function GalleryItem({ src }) {
     }, 100);
   }, []);
 
+  useEffect(() => {
+    function getCoordinates(mouse) {
+      const imagePosition = {
+        posX: ref.current.offsetLeft,
+        posY: ref.current.offsetTop,
+      };
+
+      const posX = mouse.pageX - imagePosition.posX;
+      const posY = mouse.pageY - imagePosition.posY;
+
+      setClipMask({
+        x: (posX / ref.current.clientWidth) * 100,
+        y: (posY / ref.current.clientHeight) * 100,
+      });
+    }
+
+    ref.current.addEventListener("mousemove", mouse => {
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          getCoordinates(mouse);
+        });
+      });
+    });
+  }, []);
   return (
     <div
       className={cn("gallery-item-wrapper", { "is-reveal": reveal })}
       ref={ref}
-      onMouseEnter={() => mouseContext.setSize("hide")}
-      onMouseLeave={() => mouseContext.setSize("small")}
+      onMouseEnter={() => {
+        setClipMaskRadius(25);
+        mouseContext.setSize("hide");
+      }}
+      onMouseLeave={() => {
+        setClipMaskRadius(0);
+        mouseContext.setSize("small");
+      }}
     >
       <div className="gallery-item">
         <div
@@ -38,7 +68,10 @@ function GalleryItem({ src }) {
         <div className="gallery-item">
           <div
             className="gallery-item-image masked"
-            style={{ backgroundImage: `url(${src})` }}
+            style={{
+              backgroundImage: `url(${src})`,
+              clipPath: `circle(${clipMaskRadius}% at ${clipMask.x}% ${clipMask.y}%)`,
+            }}
           ></div>
         </div>
       </div>
