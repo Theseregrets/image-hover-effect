@@ -1,0 +1,15 @@
+.app-cursor {
+  z-index: 1000;
+  border-radius: 50px;
+  width: 60px;
+  height: 60px;
+  border: 1px solid white;
+  pointer-events: none;
+  overflow: hidden;
+  transform: translate3d(0, 0, 0);
+  position: fixed;
+}
+
+html {
+  cursor: none;
+}
